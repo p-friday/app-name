@@ -15,6 +15,7 @@ const NotExist = () => {
       }
       {!cookies.user &&
         <>
+          <div className='NotExist'><b>You must be logged in</b></div>
           {navigate("/")};
         </>
       }

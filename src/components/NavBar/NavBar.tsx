@@ -43,12 +43,7 @@ const NavBar: React.FC = () => {
   const handleLogout = () => {
     removeCookie('user', { path: '/' });
     navigate('/');
-    refreshPage();
   };
-
-  function refreshPage() {
-    window.location.reload();
-  }
 
   return (
     <>
