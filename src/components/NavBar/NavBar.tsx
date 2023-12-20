@@ -50,7 +50,7 @@ const NavBar: React.FC = () => {
     {cookies.user && 
       <>
         <AppBar position="static" sx={{ bgcolor: '#1D3557' }}>
-          <Container maxWidth="xl">
+          <Container maxWidth={false}>
             <Toolbar disableGutters>
               <Typography
                 variant="h6"

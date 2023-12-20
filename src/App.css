@@ -126,10 +126,6 @@ form {
 }
 
 /* NAVBAR */
-.MuiContainer-root.MuiContainer-maxWidthXl.css-19r6kue-MuiContainer-root {
-  width: 100%;
-}
-
 a:link,
 a:visited {
 
@@ -141,3 +137,4 @@ a:visited {
 .error {
   color: red;
 }
+
