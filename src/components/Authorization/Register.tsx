@@ -1,17 +1,17 @@
-import React, { useState, FormEvent } from 'react';
-import Button from '@mui/material/Button';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { TextField } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormControl from '@mui/material/FormControl';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { useCookies } from 'react-cookie';
-import AuthProvider from '../Auth/AuthProvider';
+import React, { useState, FormEvent } from "react";
+import Button from "@mui/material/Button";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { TextField } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputLabel from "@mui/material/InputLabel";
+import InputAdornment from "@mui/material/InputAdornment";
+import FormControl from "@mui/material/FormControl";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+//import { useCookies } from 'react-cookie';
+import AuthProvider from "../Auth/AuthProvider";
 
 interface UserData {
   username: string;
@@ -21,8 +21,7 @@ interface UserData {
 }
 
 const Register: React.FC = () => {
-  
-  const [cookies, setCookie, removeCookie] = useCookies(['user']);
+  //const [cookies, setCookie, removeCookie] = useCookies(['user']);
   const auth = AuthProvider();
 
   const handleClickShowPassword = () => {
@@ -32,43 +31,47 @@ const Register: React.FC = () => {
     }));
   };
 
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
     event.preventDefault();
   };
 
   const navigate = useNavigate();
   const [userData, setUserData] = useState<UserData>({
-    username: '',
-    email: '',
-    password: '',
+    username: "",
+    email: "",
+    password: "",
     showPassword: false,
   });
 
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const newUser = { userData };
     try {
-      await axios.post('http://tripplaner.somee.com/api/Authorization/Register', newUser.userData, { headers: auth });
+      await axios.post(
+        "http://tripplaner.somee.com/api/Authorization/Register",
+        newUser.userData,
+        { headers: auth },
+      );
       setUserData({
-        username: '',
-        email: '',
-        password: '',
+        username: "",
+        email: "",
+        password: "",
         showPassword: false,
       });
       navigate(`/login`);
-      console.log("Add user")
-    } catch (error : any) {
+      console.log("Add user");
+    } catch (error: any) {
       if (error.response.status == 400) {
         console.log(error.response.data.errors.Password[0]);
-        setErrorMessage(error.response.data.errors.Password[0])
-      }
-      else if (error.response) {
+        setErrorMessage(error.response.data.errors.Password[0]);
+      } else if (error.response) {
         console.log(error.response.data.message);
-        setErrorMessage(error.response.data.message)
-      }
-      else {
+        setErrorMessage(error.response.data.message);
+      } else {
         console.log(`ERROR: ${error.message}`);
       }
     }
@@ -76,65 +79,79 @@ const Register: React.FC = () => {
 
   return (
     <>
-      <div className='registerBody'>
-        <div className='registerForm'>
+      <div className="registerBody">
+        <div className="registerForm">
           <form onSubmit={handleSubmit}>
             <b>REGISTER FORM</b>
             <TextField
-              id='username'
-              label='Username'
-              type='text'
-              variant='outlined'
+              id="username"
+              label="Username"
+              type="text"
+              variant="outlined"
               required
               value={userData.username}
-              onChange={(e) => setUserData({ ...userData, username: e.target.value })}
+              onChange={(e) =>
+                setUserData({ ...userData, username: e.target.value })
+              }
             />
             <TextField
-              id='email'
-              label='E-mail'
-              type='email'
-              variant='outlined'
+              id="email"
+              label="E-mail"
+              type="email"
+              variant="outlined"
               required
               value={userData.email}
-              onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+              onChange={(e) =>
+                setUserData({ ...userData, email: e.target.value })
+              }
             />
-            <FormControl variant='outlined'>
-              <InputLabel htmlFor='outlined-adornment-password'>Password</InputLabel>
+            <FormControl variant="outlined">
+              <InputLabel htmlFor="outlined-adornment-password">
+                Password
+              </InputLabel>
               <OutlinedInput
-                id='password'
-                label='Password'
-                type={userData.showPassword ? 'text' : 'password'}
+                id="password"
+                label="Password"
+                type={userData.showPassword ? "text" : "password"}
                 required
-                autoComplete='none'
+                autoComplete="none"
                 value={userData.password}
-                onChange={(e) => setUserData({ ...userData, password: e.target.value })}
+                onChange={(e) =>
+                  setUserData({ ...userData, password: e.target.value })
+                }
                 endAdornment={
-                  <InputAdornment position='end'>
+                  <InputAdornment position="end">
                     <IconButton
-                      aria-label='toggle password visibility'
+                      aria-label="toggle password visibility"
                       onClick={handleClickShowPassword}
                       onMouseDown={handleMouseDownPassword}
-                      edge='end'
+                      edge="end"
                     >
-                      {userData.showPassword ? <VisibilityOff /> : <Visibility />}
+                      {userData.showPassword ? (
+                        <VisibilityOff />
+                      ) : (
+                        <Visibility />
+                      )}
                     </IconButton>
                   </InputAdornment>
                 }
               />
             </FormControl>
-            {errorMessage && (
-              <p className="error"> {errorMessage} </p>
-            )}
-            <div className='registerButton'>
-              <Button variant='contained' color='primary' type='submit'>
+            {errorMessage && <p className="error"> {errorMessage} </p>}
+            <div className="registerButton">
+              <Button variant="contained" color="primary" type="submit">
                 Register
               </Button>
             </div>
           </form>
         </div>
       </div>
-      <div className='backButton'>
-        <Button variant='contained' style={{ width: '15%' }} onClick={() => navigate(-1)}>
+      <div className="backButton">
+        <Button
+          variant="contained"
+          style={{ width: "15%" }}
+          onClick={() => navigate(-1)}
+        >
           Back
         </Button>
       </div>

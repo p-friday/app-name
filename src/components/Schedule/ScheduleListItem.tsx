@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { Trip } from "../../types";
-import AuthProvider from "../Auth/AuthProvider";
 
 interface Props {
   schedule: Trip;

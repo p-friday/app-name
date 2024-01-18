@@ -27,7 +27,7 @@ const Login: FC = () => {
         showPassword: false
     });
 
-    const [cookies, setCookie, removeCookie] = useCookies(['user'])
+    const [, setCookie, ] = useCookies(['user'])
 
     const navigate = useNavigate();
 
