@@ -110,3 +110,7 @@ code {
 .modal.open {
   display: block;
 }
+
+.flex.align-start {
+  align-items: flex-start;
+}

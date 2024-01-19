@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import AuthProvider from "../Auth/AuthProvider";
-import { Place, Trip } from "../../types";
+import { Place, Trip, TripPlace } from "../../types";
 import { Autocomplete, useLoadScript } from "@react-google-maps/api";
 
 const libraries = ["places"];
@@ -22,7 +22,7 @@ const Schedule = () => {
   }
 
   const [tripData, setTripData] = useState<Trip | null>(null);
-  //const [tripPlaces, setTripPlaces] = useState<TripPlace[]>([]);
+  const [tripPlaces, setTripPlaces] = useState<TripPlace[]>([]);
   const [places, setPlaces] = useState<Place[]>([]);
   const [destination, setDestination] = useState<string>("");
   const [category, setCategory] = useState<string>("tourist attraction");
@@ -31,29 +31,28 @@ const Schedule = () => {
   const [searchResults, setSearchResults] = useState("Result: none");
   const [placeId, setPlaceId] = useState<string>("");
   const [date, setDate] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (location.state) {
       setDestination(location.state.destination);
     }
-    async function getTrip() {
-      const response = await fetch(
-        `http://tripplaner.somee.com/api/Trip/${id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${auth.Authorization}`,
-          },
-        },
-      );
-      const json = await response.json();
-      setTripData(json);
-      //console.log("gettripfunc");
-    }
 
     getTrip();
   }, []);
+  async function getTrip() {
+    const response = await fetch(`http://tripplaner.somee.com/api/Trip/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${auth.Authorization}`,
+      },
+    });
+    const json = await response.json();
+    setTripData(json);
+    setTripPlaces(json.places);
+    console.log("gettripfunc");
+  }
 
   useEffect(() => {
     if (tripData && tripData.places.length === 0) {
@@ -102,7 +101,7 @@ const Schedule = () => {
       // @ts-ignore
       const place = searchResults.getPlace();
       setPlaceId(place.place_id);
-      //console.log(place);
+      console.log(placeId);
     }
   }
 
@@ -122,15 +121,34 @@ const Schedule = () => {
 
     if (!response.ok) {
       console.log(response);
+      const json = await response.json();
+      console.log(json);
+    } else {
+      getTrip();
+      setOpen(false);
+      event.target.reset();
     }
-
-    //console.log(response);
-    //const json = await response.json();
-    //console.log(json);
   }
 
   async function searchForPlaces(event: any) {
     event.preventDefault();
+
+    setLoading(true);
+
+    const response = await fetch(
+      `http://tripplaner.somee.com/api/Places?category=${category}&placename=${destination}&radius=${radius}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${auth.Authorization}`,
+        },
+      },
+    );
+    const json = await response.json();
+    setPlaces(json);
+
+    setLoading(false);
   }
 
   async function addToSchedule(event: any) {
@@ -152,7 +170,7 @@ const Schedule = () => {
   return (
     <div className="flex flex-col items-stretch">
       <h1>Schedule</h1>
-      <div className="flex">
+      <div className="flex align-start">
         <div className="w-1/4">
           <button onClick={handleOpen}>Add Place</button>
           <div className={`modal ${open ? "open" : ""}`}>
@@ -215,17 +233,21 @@ const Schedule = () => {
             </label>
             <button type="submit">Search</button>
           </form>
-          <div id="places">
-            places:
-            {places.map((place, index) => (
-              <div key={index} className="bg-gray-200 border-2 border-black">
-                <h4>name: {place.name}</h4>
-                <button className="" onClick={addToSchedule}>
-                  Add
-                </button>
-              </div>
-            ))}
-          </div>
+          {loading ? (
+            <p>Loading...</p>
+          ) : (
+            <div id="places">
+              places:
+              {places.map((place, index) => (
+                <div key={index} className="bg-gray-200 border-2 border-black">
+                  <h4>name: {place.name}</h4>
+                  <button className="" onClick={addToSchedule}>
+                    Add
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         <div className="flex overflow-x-auto w-3/4">
           {days.map((day, index) => (
@@ -234,11 +256,16 @@ const Schedule = () => {
               className="w-1/4 m-2 border-2 border-black p-2 bg-gray-400"
             >
               <h2>{day.toDateString()}</h2>
-              {tripData.places
+              {tripPlaces
                 .filter(
                   (place) =>
                     new Date(place.chosenDay).toLocaleDateString() ===
                     day.toLocaleDateString(),
+                )
+                .sort(
+                  (a, b) =>
+                    new Date(a.chosenDay).getTime() -
+                    new Date(b.chosenDay).getTime(),
                 )
                 .map((place, index) => (
                   <div
