@@ -41,8 +41,8 @@ const CreateNewSchedule = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <label>
+      <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+        <label className="flex items-center space-x-2">
           Destination:
           <input
             type="text"
@@ -50,29 +50,37 @@ const CreateNewSchedule = () => {
             value={destination}
             onChange={(e) => setDestination(e.target.value)}
             required
+            className="border-2 border-gray-300 p-2 rounded-md"
           />
         </label>
-        <label>
+        <label className="flex items-center space-x-2">
           Start Date:
           <input
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
             required
+            className="border-2 border-gray-300 p-2 rounded-md"
           />
         </label>
-        <label>
+        <label className="flex items-center space-x-2">
           End Date:
           <input
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
             required
+            className="border-2 border-gray-300 p-2 rounded-md"
           />
         </label>
-        <button type="submit">Create</button>
+        <button
+          type="submit"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Create
+        </button>
       </form>
-      <button onClick={test}>test</button>
+      {/* <button onClick={test}>test</button> */}
     </>
   );
 };

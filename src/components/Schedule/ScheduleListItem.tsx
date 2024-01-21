@@ -22,15 +22,25 @@ const ScheduleListItem = ({ schedule, onDelete }: Props) => {
   }
 
   return (
-    <Link to={`/schedule/${schedule.id}`} className="border-black border-2">
-      <h1>destination</h1>
-      <h2>
-        <b>from:</b> {startDate.toDateString()}, <b>to:</b>{" "}
-        {endDate.toDateString()}
-      </h2>
-      <p>duration: {diffDays} days</p>
-      <button onClick={(e) => handleDelete(e)}>Delete</button>
-    </Link>
+    <div className="inline-block my-2">
+      <Link
+        to={`/schedule/${schedule.id}`}
+        className="inline-block border-black border-2 p-4 bg-gray-300 text-black rounded shadow hover:shadow-lg transition-shadow duration-200"
+      >
+        <h1 className="text-xl text-black font-bold mb-2">destination</h1>
+        <h2 className="text-lg mb-2 text-black">
+          <b>from:</b> {startDate.toDateString()}, <b>to:</b>{" "}
+          {endDate.toDateString()}
+        </h2>
+        <p className="mb-2 text-black">duration: {diffDays} days</p>
+        <button
+          onClick={(e) => handleDelete(e)}
+          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Delete
+        </button>
+      </Link>
+    </div>
   );
 };
 

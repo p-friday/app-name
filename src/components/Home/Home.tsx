@@ -54,12 +54,25 @@ const Home = () => {
                       Welcome user!
                     </TableCell>
                   </TableRow>
-                  <div>
-                    <button onClick={handleClickOpen}>
+                  <div className="p-4 flex flex-col">
+                    <button
+                      onClick={handleClickOpen}
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    >
                       Create New Schedule
                     </button>
-                    <Link to="/myschedules">My Schedules</Link>
-                    <Link to="/browse">Browse Public Schedules</Link>
+                    <Link
+                      to="/myschedules"
+                      className="text-blue-500 hover:text-blue-800 mx-2"
+                    >
+                      My Schedules
+                    </Link>
+                    <Link
+                      to="/browse"
+                      className="text-blue-500 hover:text-blue-800 mx-2"
+                    >
+                      Browse Public Schedules
+                    </Link>
                     <Dialog
                       open={open}
                       onClose={handleClose}

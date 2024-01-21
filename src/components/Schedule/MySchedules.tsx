@@ -44,7 +44,7 @@ const MySchedules = () => {
   }
 
   return (
-    <div>
+    <div className="flex flex-col">
       <h1>My Schedules</h1>
       {schedules.map((schedule: Trip) => (
         <ScheduleListItem

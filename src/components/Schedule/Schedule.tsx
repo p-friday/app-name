@@ -3,6 +3,13 @@ import { useLocation, useParams } from "react-router-dom";
 import AuthProvider from "../Auth/AuthProvider";
 import { Place, Trip, TripPlace } from "../../types";
 import { Autocomplete, useLoadScript } from "@react-google-maps/api";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
 
 const libraries = ["places"];
 
@@ -32,6 +39,8 @@ const Schedule = () => {
   const [placeId, setPlaceId] = useState<string>("");
   const [date, setDate] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [askDate, setAskDate] = useState<boolean>(false);
+  const [error, setError] = useState<any>("");
 
   useEffect(() => {
     if (location.state) {
@@ -40,6 +49,7 @@ const Schedule = () => {
 
     getTrip();
   }, []);
+
   async function getTrip() {
     const response = await fetch(`http://tripplaner.somee.com/api/Trip/${id}`, {
       method: "GET",
@@ -49,9 +59,13 @@ const Schedule = () => {
       },
     });
     const json = await response.json();
-    setTripData(json);
-    setTripPlaces(json.places);
-    console.log("gettripfunc");
+    if (!response.ok) {
+      setError(json);
+    } else {
+      setTripData(json);
+      setTripPlaces(json.places);
+      console.log("gettripfunc");
+    }
   }
 
   useEffect(() => {
@@ -70,7 +84,11 @@ const Schedule = () => {
             },
           );
           const json = await response.json();
-          setPlaces(json);
+          if (!response.ok) {
+            setError(json);
+          } else {
+            setPlaces(json);
+          }
         }
       }
 
@@ -123,9 +141,11 @@ const Schedule = () => {
       console.log(response);
       const json = await response.json();
       console.log(json);
+      setError(json);
     } else {
       getTrip();
       setOpen(false);
+      setAskDate(false);
       event.target.reset();
     }
   }
@@ -146,13 +166,43 @@ const Schedule = () => {
       },
     );
     const json = await response.json();
-    setPlaces(json);
-
+    if (!response.ok) {
+      setError(json);
+    } else {
+      setPlaces(json);
+    }
     setLoading(false);
   }
 
-  async function addToSchedule(event: any) {
-    event.preventDefault();
+  function handleAskDate(place: Place) {
+    setAskDate(true);
+    setPlaceId(place.placeId);
+  }
+
+  function handleCancel() {
+    setAskDate(false);
+  }
+
+  async function handleRemove(place_id: number) {
+    const response = await fetch(
+      `http://tripplaner.somee.com/api/Trip/place/${place_id}/plan/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${auth.Authorization}`,
+        },
+      },
+    );
+    //const json = await response.json();
+    if (!response.ok) {
+      console.log(response);
+      //setError(json);
+    } else {
+      console.log(response);
+      //console.log(json);
+      setTripPlaces(tripPlaces.filter((place) => place.id !== place_id));
+    }
   }
 
   const startDate = new Date(tripData?.startDate);
@@ -168,11 +218,16 @@ const Schedule = () => {
   //console.log("after setting days");
 
   return (
-    <div className="flex flex-col items-stretch">
+    <div className="flex flex-col items-stretch px-2">
       <h1>Schedule</h1>
       <div className="flex align-start">
-        <div className="w-1/4">
-          <button onClick={handleOpen}>Add Place</button>
+        <div className="w-1/4 bg-gray-700 py-3 rounded-xl">
+          <button
+            onClick={handleOpen}
+            className="bg-green-400 hover:bg-green-700 text-black font-bold py-2 px-4 rounded"
+          >
+            Add Place
+          </button>
           <div className={`modal ${open ? "open" : ""}`}>
             <div className="modal-content">
               <h2 id="form-dialog-title">Add new place</h2>
@@ -201,9 +256,9 @@ const Schedule = () => {
               </div>
             </div>
           </div>
-          <p>or</p>
-          <h3>Look for more places</h3>
-          <form onSubmit={searchForPlaces}>
+          <p className="text-white">or</p>
+          <h3 className="text-white">Look for more places</h3>
+          <form onSubmit={searchForPlaces} className="text-white">
             <label>
               destination:
               <input
@@ -211,6 +266,7 @@ const Schedule = () => {
                 placeholder="destination"
                 value={destination}
                 onChange={(e) => setDestination(e.target.value)}
+                className="border-2 border-gray-300 text-black p-1 rounded-md mb-2"
               />
             </label>
             <label>
@@ -220,6 +276,7 @@ const Schedule = () => {
                 placeholder="category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
+                className="border-2 border-gray-300 text-black p-1 rounded-md mb-2"
               />
             </label>
             <label>
@@ -229,23 +286,56 @@ const Schedule = () => {
                 placeholder="radius"
                 value={radius}
                 onChange={(e) => setRadius(Number(e.target.value))}
+                className="border-2 border-gray-300 text-black p-1 rounded-md mb-2"
               />
             </label>
-            <button type="submit">Search</button>
+            <button
+              type="submit"
+              className="bg-yellow-500 hover:bg-yellow-700 text-black font-bold py-2 px-4 rounded"
+            >
+              Search
+            </button>
           </form>
           {loading ? (
             <p>Loading...</p>
           ) : (
-            <div id="places">
+            <div id="places" className="text-white">
               places:
               {places.map((place, index) => (
-                <div key={index} className="bg-gray-200 border-2 border-black">
+                <div
+                  key={index}
+                  className="bg-gray-200 border-2 border-black text-black rounded-md my-2 mx-3 p-1"
+                >
                   <h4>name: {place.name}</h4>
-                  <button className="" onClick={addToSchedule}>
+                  <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded"
+                    onClick={() => handleAskDate(place)}
+                  >
                     Add
                   </button>
                 </div>
               ))}
+              <div className={`modal ${askDate ? "open" : ""}`}>
+                <div className="modal-content">
+                  <h2 id="form-dialog-title">When would you like to visit?</h2>
+                  <div>
+                    <form onSubmit={addNewPlace}>
+                      <label>
+                        date:
+                        <input
+                          type="datetime-local"
+                          min={startDate.toISOString().substring(0, 16)}
+                          max={endDate.toISOString().substring(0, 16)}
+                          value={date}
+                          onChange={(e) => setDate(e.target.value)}
+                        />
+                      </label>
+                      <button type="submit">Add</button>
+                    </form>
+                    <button onClick={handleCancel}>Cancel</button>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -253,9 +343,9 @@ const Schedule = () => {
           {days.map((day, index) => (
             <div
               key={index}
-              className="w-1/4 m-2 border-2 border-black p-2 bg-gray-400"
+              className="flex flex-col w-1/4 m-2 border-2 border-black p-2 bg-gray-400"
             >
-              <h2>{day.toDateString()}</h2>
+              <h2 className="font-bold">{day.toDateString()}</h2>
               {tripPlaces
                 .filter(
                   (place) =>
@@ -270,16 +360,36 @@ const Schedule = () => {
                 .map((place, index) => (
                   <div
                     key={index}
-                    className="bg-gray-200 border-2 border-black"
+                    className="bg-gray-200 border-2 border-black m-1 p-1"
                   >
                     <h4>name: {place.apiPlaceId}</h4>
-                    <p>time: {place.chosenDay.split("T")[1]}</p>
+                    <p>at: {place.chosenDay.split("T")[1]}</p>
+                    <button
+                      onClick={() => handleRemove(place.id)}
+                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
+                    >
+                      Remove
+                    </button>
                   </div>
                 ))}
             </div>
           ))}
         </div>
       </div>
+      <Dialog
+        open={!!error}
+        onClose={() => setError("")}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Something went wrong!</DialogTitle>
+        <DialogContent id="alert-dialog-description">
+          {error.message}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setError("")}>OK</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
