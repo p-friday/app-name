@@ -14,7 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { Link, useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 
-const pages = ["Home"];
+const pages = ['Home', 'Plans'];
 const settings = ["Profile", "Dashboard"];
 
 const NavBar: React.FC = () => {
