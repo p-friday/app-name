@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import AuthProvider from "../Auth/AuthProvider";
 import { Place, Trip, TripPlace } from "../../types";
 import { Autocomplete, GoogleMap, useLoadScript } from "@react-google-maps/api";
@@ -16,7 +16,6 @@ const libraries = ["places"];
 const Schedule = () => {
   const auth = AuthProvider();
   const { id } = useParams();
-  const location = useLocation();
 
   const { isLoaded, loadError } = useLoadScript({
     //id: "google-map-script",
