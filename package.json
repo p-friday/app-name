@@ -18,12 +18,14 @@
     "@react-google-maps/api": "^2.19.2",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.6.2",
+    "google-map-react": "^2.2.1",
     "react": "^18.2.0",
     "react-cookie": "^6.1.1",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.20.0"
   },
   "devDependencies": {
+    "@types/google-map-react": "^2.1.10",
     "@types/react": "^18.2.42",
     "@types/react-dom": "^18.2.15",
     "@typescript-eslint/eslint-plugin": "^6.10.0",

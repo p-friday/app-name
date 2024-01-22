@@ -68,6 +68,12 @@ const Home = () => {
                       My Schedules
                     </Link>
                     <Link
+                      to="/mapa"
+                      className="text-blue-500 hover:text-blue-800 mx-2"
+                    >
+                      Mapa lokalizacji restauracji i hoteli
+                    </Link>
+                    <Link
                       to="/browse"
                       className="text-blue-500 hover:text-blue-800 mx-2"
                     >

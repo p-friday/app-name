@@ -1,4 +1,5 @@
 import "./App.css";
+import  React, {useEffect, useState } from 'react';
 import { Route, Routes } from "react-router-dom";
 import Start from "./components/Home/Start";
 import Login from "./components/Authorization/Login";
@@ -9,8 +10,14 @@ import NavBar from "./components/NavBar/NavBar";
 import Schedule from "./components/Schedule/Schedule";
 import MySchedules from "./components/Schedule/MySchedules";
 import Plans from "./components/Plans/plans";
+import Mapa from "./components/Map/Mapa"
+
 
 function App() {
+
+      
+  
+
   return (
     <>
       <NavBar />
@@ -22,8 +29,10 @@ function App() {
         <Route path="/plans/*" element={<Plans />} />
         <Route path="/schedule/:id" element={<Schedule />} />
         <Route path="/myschedules/*" element={<MySchedules />} />
+        <Route path="/mapa/*" element={<Mapa />} />
         <Route path="*" element={<NotExist />} />
       </Routes>
+
     </>
   );
 }
