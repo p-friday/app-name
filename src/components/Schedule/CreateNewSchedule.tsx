@@ -12,11 +12,6 @@ const CreateNewSchedule = () => {
 
   const auth = AuthProvider() ?? {};
 
-  function test() {
-    console.log(startDate);
-    console.log(endDate);
-  }
-
   async function handleSubmit(event: any) {
     event.preventDefault();
 
@@ -80,7 +75,6 @@ const CreateNewSchedule = () => {
           Create
         </button>
       </form>
-      {/* <button onClick={test}>test</button> */}
     </>
   );
 };
