@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import AuthProvider from "../Auth/AuthProvider";
 import { Place, Trip, TripPlace } from "../../types";
-import { Autocomplete, useLoadScript } from "@react-google-maps/api";
+import { Autocomplete, GoogleMap, useLoadScript } from "@react-google-maps/api";
 import {
   Button,
   Dialog,
@@ -19,6 +19,7 @@ const Schedule = () => {
   const location = useLocation();
 
   const { isLoaded, loadError } = useLoadScript({
+    //id: "google-map-script",
     googleMapsApiKey: import.meta.env.VITE_MAPS_API_KEY,
     // @ts-ignore
     libraries: libraries,
@@ -27,6 +28,11 @@ const Schedule = () => {
   if (loadError) {
     return <div>Error loading maps</div>;
   }
+
+  const mapStyles = {
+    height: "100vh",
+    width: "100%",
+  };
 
   const [tripData, setTripData] = useState<Trip | null>(null);
   const [tripPlaces, setTripPlaces] = useState<TripPlace[]>([]);
@@ -41,6 +47,11 @@ const Schedule = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [askDate, setAskDate] = useState<boolean>(false);
   const [error, setError] = useState<any>("");
+  const [mapOpen, setMapOpen] = useState<boolean>(false);
+  const [currentLocation, setCurrentLocation] = useState<any>({
+    lat: 0,
+    lng: 0,
+  });
 
   useEffect(() => {
     if (location.state) {
@@ -205,6 +216,20 @@ const Schedule = () => {
     }
   }
 
+  function showMap() {
+    navigator.geolocation.getCurrentPosition((position) => {
+      setCurrentLocation({
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      });
+    });
+    setMapOpen(true);
+  }
+
+  function closeMap() {
+    setMapOpen(false);
+  }
+
   const startDate = new Date(tripData?.startDate);
   const endDate = new Date(tripData?.endDate);
   endDate.setHours(23, 59, 59, 999);
@@ -224,10 +249,31 @@ const Schedule = () => {
         <div className="w-1/4 bg-gray-700 py-3 rounded-xl">
           <button
             onClick={handleOpen}
-            className="bg-green-400 hover:bg-green-700 text-black font-bold py-2 px-4 rounded"
+            className="bg-green-400 hover:bg-green-700 text-black font-bold py-2 px-4 mx-1 rounded"
           >
             Add Place
           </button>
+          <button
+            onClick={showMap}
+            className="bg-blue-400 hover:bg-blue-700 text-black font-bold py-2 px-4 mx-1 rounded"
+          >
+            whats near me
+          </button>
+          <div className={`modal ${mapOpen ? "open" : ""}`}>
+            <div className="modal-content">
+              <h2 id="form-dialog-title">Map</h2>
+              {isLoaded ? (
+                <GoogleMap
+                  mapContainerStyle={mapStyles}
+                  zoom={13}
+                  center={currentLocation}
+                />
+              ) : (
+                <p>coudn't load google maps</p>
+              )}
+              <button onClick={closeMap}>Close</button>
+            </div>
+          </div>
           <div className={`modal ${open ? "open" : ""}`}>
             <div className="modal-content">
               <h2 id="form-dialog-title">Add new place</h2>
@@ -255,6 +301,7 @@ const Schedule = () => {
                 <button onClick={handleClose}>Cancel</button>
               </div>
             </div>
+            budiv
           </div>
           <p className="text-white">or</p>
           <h3 className="text-white">Look for more places</h3>
