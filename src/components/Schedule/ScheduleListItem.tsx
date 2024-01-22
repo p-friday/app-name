@@ -27,7 +27,9 @@ const ScheduleListItem = ({ schedule, onDelete }: Props) => {
         to={`/schedule/${schedule.id}`}
         className="inline-block border-black border-2 p-4 bg-gray-300 text-black rounded shadow hover:shadow-lg transition-shadow duration-200"
       >
-        <h1 className="text-xl text-black font-bold mb-2">destination</h1>
+        <h1 className="text-xl text-black font-bold mb-2">
+          {schedule.destination}
+        </h1>
         <h2 className="text-lg mb-2 text-black">
           <b>from:</b> {startDate.toDateString()}, <b>to:</b>{" "}
           {endDate.toDateString()}

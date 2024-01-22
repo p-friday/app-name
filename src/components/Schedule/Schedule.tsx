@@ -54,11 +54,10 @@ const Schedule = () => {
   });
 
   useEffect(() => {
-    if (location.state) {
-      setDestination(location.state.destination);
-    }
-
     getTrip();
+    if (tripData?.destination) {
+      setDestination(tripData?.destination);
+    }
   }, []);
 
   async function getTrip() {
@@ -82,29 +81,28 @@ const Schedule = () => {
   useEffect(() => {
     if (tripData && tripData.places.length === 0) {
       async function getPlaces() {
-        //console.log(`getplacesfunc: ${destination}`);
-        if (destination) {
-          const response = await fetch(
-            `http://tripplaner.somee.com/api/Places?category=${category}&placename=${destination}&radius=${radius}`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `${auth.Authorization}`,
-              },
+        // console.log(`getplacesfunc: ${tripData?.destination}`);
+        const response = await fetch(
+          `http://tripplaner.somee.com/api/Places?category=${category}&placename=${tripData?.destination}&radius=${radius}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `${auth.Authorization}`,
             },
-          );
-          const json = await response.json();
-          if (!response.ok) {
-            setError(json);
-          } else {
-            setPlaces(json);
-          }
+          },
+        );
+        const json = await response.json();
+        if (!response.ok) {
+          setError(json);
+        } else {
+          setPlaces(json);
         }
       }
 
       getPlaces();
-    } else {
+    } else if (tripData) {
+      setDestination(tripData.destination);
       //console.log(tripData?.places);
     }
   }, [tripData]);
@@ -244,7 +242,9 @@ const Schedule = () => {
 
   return (
     <div className="flex flex-col items-stretch px-2">
-      <h1>Schedule</h1>
+      <h1 className="text-3xl font-bold text-black">
+        {tripData.destination} trip schedule
+      </h1>
       <div className="flex align-start">
         <div className="w-1/4 bg-gray-700 py-3 rounded-xl">
           <button
@@ -363,7 +363,7 @@ const Schedule = () => {
                 </div>
               ))}
               <div className={`modal ${askDate ? "open" : ""}`}>
-                <div className="modal-content">
+                <div className="modal-content text-black">
                   <h2 id="form-dialog-title">When would you like to visit?</h2>
                   <div>
                     <form onSubmit={addNewPlace}>
@@ -407,9 +407,9 @@ const Schedule = () => {
                 .map((place, index) => (
                   <div
                     key={index}
-                    className="bg-gray-200 border-2 border-black m-1 p-1"
+                    className="bg-gray-200 border-2 border-black m-1 p-2 rounded-md"
                   >
-                    <h4>name: {place.apiPlaceId}</h4>
+                    <h4 className="font-bold">{place.placeName}</h4>
                     <p>at: {place.chosenDay.split("T")[1]}</p>
                     <button
                       onClick={() => handleRemove(place.id)}

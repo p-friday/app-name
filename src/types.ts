@@ -1,5 +1,6 @@
 export type Trip = {
   id: number;
+  destination: string;
   accountId: number;
   isPublic: boolean;
   startDate: string;
@@ -20,6 +21,7 @@ export type Place = {
 
 export type TripPlace = {
   id: number;
+  placeName: string;
   apiPlaceId: string;
   tripPlanId: number;
   chosenDay: string;

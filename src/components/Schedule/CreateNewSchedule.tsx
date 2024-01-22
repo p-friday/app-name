@@ -15,9 +15,10 @@ const CreateNewSchedule = () => {
   async function handleSubmit(event: any) {
     event.preventDefault();
 
+    //http://tripplaner.somee.com/api/Trip/create?startDate=start&endDate=end&destination=dest
     //http://tripplaner.somee.com/api/Trip/create?startDate=2024-01-15T12%3A11&endDate=2024-01-20T12%3A11
     const response = await fetch(
-      `http://tripplaner.somee.com/api/Trip/create?startDate=${startDate}&endDate=${endDate}`,
+      `http://tripplaner.somee.com/api/Trip/create?startDate=${startDate}&endDate=${endDate}&destination=${destination}`,
       {
         method: "POST",
         headers: {
